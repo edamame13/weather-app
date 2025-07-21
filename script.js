@@ -190,6 +190,10 @@ function updateBackgroundColor(weatherMain) {
 function initializeApp() {
     const apiKey = getApiKey();
     
+    // デバッグ情報（本番では削除推奨）
+    console.log('Built-in API Key status:', BUILT_IN_API_KEY !== 'API_KEY_PLACEHOLDER' ? 'Available' : 'Not available');
+    console.log('Local storage API Key:', localStorage.getItem(API_KEY_STORAGE) ? 'Available' : 'Not available');
+    
     if (apiKey) {
         showMainApp();
         // 組み込みAPIキーがある場合は設定情報を非表示
