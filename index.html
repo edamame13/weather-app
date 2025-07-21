@@ -71,8 +71,17 @@
         </div>
     </div>
 
-    <script src="config.js"></script>
+    <script>
+        // config.jsの読み込みエラーを処理
+        const script = document.createElement('script');
+        script.src = 'config.js';
+        script.onerror = function () {
+            console.log('config.js not found - using fallback configuration');
+            window.WEATHER_APP_CONFIG = { API_KEY: null };
+        };
+        document.head.appendChild(script);
+    </script>
     <script src="script.js"></script>
-</body>""
+</body>
 
 </html>

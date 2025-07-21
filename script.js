@@ -190,10 +190,13 @@ function updateBackgroundColor(weatherMain) {
 function initializeApp() {
     const apiKey = getApiKey();
     
-    // デバッグ情報（本番では削除推奨）
-    console.log('Config API Key status:', window.WEATHER_APP_CONFIG?.API_KEY ? 'Available' : 'Not available');
-    console.log('Built-in API Key status:', BUILT_IN_API_KEY !== 'API_KEY_PLACEHOLDER' ? 'Available' : 'Not available');
-    console.log('Local storage API Key:', localStorage.getItem(API_KEY_STORAGE) ? 'Available' : 'Not available');
+    // デバッグ情報
+    console.log('=== Weather App Debug Info ===');
+    console.log('Config API Key:', window.WEATHER_APP_CONFIG?.API_KEY ? '✅ Available' : '❌ Not available');
+    console.log('Built-in API Key:', BUILT_IN_API_KEY !== 'API_KEY_PLACEHOLDER' ? '✅ Available' : '❌ Not available');
+    console.log('Local storage API Key:', localStorage.getItem(API_KEY_STORAGE) ? '✅ Available' : '❌ Not available');
+    console.log('Final API Key:', apiKey ? '✅ Ready to use' : '❌ Not found');
+    console.log('==============================');
     
     if (apiKey) {
         showMainApp();
