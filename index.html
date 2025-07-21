@@ -10,9 +10,27 @@
     <div class="container">
         <h1>天気予報アプリ</h1>
         
-        <div class="search-section">
-            <input type="text" id="cityInput" placeholder="都市名を入力してください（例：Tokyo）">
-            <button id="searchBtn">天気を取得</button>
+        <div id="apiKeySection" class="api-key-section">
+            <h3>初回設定</h3>
+            <p>OpenWeatherMap APIキーを入力してください</p>
+            <div class="api-input-group">
+                <input type="password" id="apiKeyInput" placeholder="APIキーを入力">
+                <button id="saveApiKeyBtn">保存</button>
+            </div>
+            <div class="api-help">
+                <p><a href="https://openweathermap.org/api" target="_blank">APIキーの取得方法</a></p>
+                <small>APIキーはブラウザにのみ保存され、安全に管理されます</small>
+            </div>
+        </div>
+        
+        <div id="mainApp" class="main-app hidden">
+            <div class="search-section">
+                <input type="text" id="cityInput" placeholder="都市名を入力してください（例：Tokyo）">
+                <button id="searchBtn">天気を取得</button>
+            </div>
+            <div class="api-key-info">
+                <small>APIキー設定済み | <button id="changeApiKeyBtn" class="link-btn">変更</button></small>
+            </div>
         </div>
         
         <div id="errorMessage" class="error hidden"></div>

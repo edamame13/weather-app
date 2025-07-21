@@ -2,6 +2,10 @@
 
 シンプルで美しい天気予報Webアプリです。OpenWeatherMap APIを使用して、リアルタイムの天気情報を表示します。
 
+## 🌟 デモ
+
+**GitHub Pages**: https://edamame13.github.io/weather-app/
+
 ## 機能
 
 - 🌍 世界中の都市の天気情報を検索
@@ -9,6 +13,7 @@
 - 🌟 天気アイコンとアニメーション効果
 - 📱 レスポンシブデザイン（モバイル対応）
 - ⚡ リアルタイム天気データ
+- 🔒 セキュアなAPIキー管理（ローカルストレージ）
 
 ## 表示される情報
 
@@ -18,39 +23,48 @@
 - 風速
 - 天気アイコン
 
-## セットアップ
+## 🚀 使用方法
 
-1. このリポジトリをクローンまたはダウンロード
+### GitHub Pagesで使用（推奨）
+
+1. https://edamame13.github.io/weather-app/ にアクセス
+2. 都市名を入力して天気情報を取得
+   - APIキーは安全に組み込まれているため、設定不要です
+   - フォールバック機能により、必要に応じて手動設定も可能
+
+### ローカルで使用
+
+1. このリポジトリをクローン
 ```bash
-git clone [your-repo-url]
+git clone https://github.com/edamame13/weather-app.git
 cd weather-app
 ```
 
-2. OpenWeatherMap APIキーを取得
-   - [OpenWeatherMap](https://openweathermap.org/api)でアカウント作成
-   - 無料のAPIキーを取得
+2. ブラウザで`index.html`を開く
+3. APIキーを設定して使用開始
 
-3. APIキーを設定
-   - `script.js`ファイルを開く
-   - `API_KEY`変数に取得したAPIキーを設定
-   ```javascript
-   const API_KEY = 'your_api_key_here';
-   ```
+## 🔑 APIキーの取得方法
 
-4. ブラウザで`index.html`を開く
+1. [OpenWeatherMap](https://openweathermap.org/api)にアクセス
+2. 「Sign Up」で無料アカウントを作成
+3. ログイン後、「API keys」タブでAPIキーを確認
+4. APIキーをコピーしてアプリに入力
 
-## 使用方法
+**注意**: APIキーは有効になるまで数分〜数時間かかる場合があります。
 
-1. 都市名を入力（例：Tokyo, London, New York）
-2. 「天気を取得」ボタンをクリック
-3. 天気情報とアイコンが表示されます
+## 🛡️ セキュリティ
+
+- APIキーはブラウザのローカルストレージにのみ保存
+- GitHubリポジトリにはAPIキーは含まれません
+- 無効なAPIキーは自動的に削除されます
 
 ## 技術スタック
 
 - HTML5
-- CSS3 (Flexbox, Animations)
-- Vanilla JavaScript
+- CSS3 (Flexbox, Animations, CSS Grid)
+- Vanilla JavaScript (ES6+)
 - OpenWeatherMap API
+- Local Storage API
 
 ## 対応ブラウザ
 
@@ -59,10 +73,17 @@ cd weather-app
 - Safari
 - Edge
 
+## 🎨 特徴
+
+- **動的背景**: 天気に応じて背景色が変化
+- **アニメーション**: 天気アイコンが浮遊するアニメーション
+- **レスポンシブ**: モバイルデバイスに対応
+- **直感的UI**: シンプルで使いやすいインターフェース
+
 ## ライセンス
 
 MIT License
 
 ## 作者
 
-[edamame13]
+[@edamame13](https://github.com/edamame13)

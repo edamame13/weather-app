@@ -1,8 +1,14 @@
-// OpenWeatherMap APIキー（ここに実際のAPIキーを入力してください）
-const API_KEY = 'API_KEY_HERE';
+// OpenWeatherMap API設定
 const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
+const API_KEY_STORAGE = 'weather_app_api_key';
+const BUILT_IN_API_KEY = 'API_KEY_PLACEHOLDER'; // GitHub Actionsで置換される
 
 // DOM要素の取得
+const apiKeySection = document.getElementById('apiKeySection');
+const mainApp = document.getElementById('mainApp');
+const apiKeyInput = document.getElementById('apiKeyInput');
+const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+const changeApiKeyBtn = document.getElementById('changeApiKeyBtn');
 const cityInput = document.getElementById('cityInput');
 const searchBtn = document.getElementById('searchBtn');
 const weatherInfo = document.getElementById('weatherInfo');
@@ -13,11 +19,21 @@ const weather = document.getElementById('weather');
 const temperature = document.getElementById('temperature');
 const humidity = document.getElementById('humidity');
 
+// アプリ初期化
+document.addEventListener('DOMContentLoaded', initializeApp);
+
 // イベントリスナーの設定
+saveApiKeyBtn.addEventListener('click', saveApiKey);
+changeApiKeyBtn.addEventListener('click', showApiKeySection);
 searchBtn.addEventListener('click', getWeather);
 cityInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         getWeather();
+    }
+});
+apiKeyInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        saveApiKey();
     }
 });
 
@@ -31,35 +47,12 @@ async function getWeather() {
         return;
     }
 
-    // APIキーチェック - テストモード追加
-    if (API_KEY === 'API_KEY_HERE' || API_KEY === 'TEST_MODE') {
-        showError('テストモードで実行中です。実際のAPIキーを設定するか、"TEST_MODE"と入力してテストデータを表示してください。');
-
-        // テストモード：TEST_MODEと入力された場合はモックデータを表示
-        if (API_KEY === 'TEST_MODE') {
-            hideAll();
-            showLoading();
-
-            setTimeout(() => {
-                const mockData = {
-                    name: city,
-                    sys: { country: 'JP' },
-                    weather: [{
-                        description: '晴れ',
-                        main: 'Clear',
-                        icon: '01d'
-                    }],
-                    main: {
-                        temp: 25,
-                        humidity: 60,
-                        feels_like: 27
-                    },
-                    wind: { speed: 2.5 }
-                };
-                displayWeather(mockData);
-                hideLoading();
-            }, 1000);
-        }
+    // APIキーを取得
+    const API_KEY = getApiKey();
+    
+    if (!API_KEY) {
+        showError('APIキーが設定されていません');
+        showApiKeySection();
         return;
     }
 
@@ -77,7 +70,8 @@ async function getWeather() {
             if (response.status === 404) {
                 throw new Error('都市が見つかりません。都市名を確認してください。');
             } else if (response.status === 401) {
-                throw new Error('APIキーが無効です。正しいAPIキーを設定してください。OpenWeatherMapでAPIキーが有効になるまで数分〜数時間かかる場合があります。');
+                localStorage.removeItem(API_KEY_STORAGE); // 無効なAPIキーを削除
+                throw new Error('APIキーが無効です。新しいAPIキーを設定してください。');
             } else {
                 throw new Error('天気情報の取得に失敗しました。');
             }
@@ -89,6 +83,13 @@ async function getWeather() {
     } catch (error) {
         console.error('Error:', error);
         showError(error.message);
+        
+        // APIキーエラーの場合は設定画面に戻る
+        if (error.message.includes('APIキーが無効')) {
+            setTimeout(() => {
+                showApiKeySection();
+            }, 2000);
+        }
     } finally {
         hideLoading();
     }
@@ -183,6 +184,94 @@ function updateBackgroundColor(weatherMain) {
             // デフォルトの背景を維持
             break;
     }
+}
+
+// アプリ初期化関数
+function initializeApp() {
+    const apiKey = getApiKey();
+    
+    if (apiKey) {
+        showMainApp();
+        // 組み込みAPIキーがある場合は設定情報を非表示
+        if (BUILT_IN_API_KEY && BUILT_IN_API_KEY !== 'API_KEY_PLACEHOLDER') {
+            const apiKeyInfo = document.querySelector('.api-key-info');
+            if (apiKeyInfo) {
+                apiKeyInfo.style.display = 'none';
+            }
+        }
+    } else {
+        showApiKeySection();
+    }
+}
+
+// APIキー保存関数
+function saveApiKey() {
+    const apiKey = apiKeyInput.value.trim();
+    
+    if (!apiKey) {
+        showError('APIキーを入力してください');
+        return;
+    }
+    
+    // APIキーの基本的な形式チェック（32文字の英数字）
+    if (!/^[a-zA-Z0-9]{32}$/.test(apiKey)) {
+        showError('APIキーの形式が正しくありません（32文字の英数字である必要があります）');
+        return;
+    }
+    
+    localStorage.setItem(API_KEY_STORAGE, apiKey);
+    apiKeyInput.value = '';
+    showMainApp();
+    showSuccess('APIキーが保存されました！');
+}
+
+// APIキー設定画面を表示
+function showApiKeySection() {
+    apiKeySection.classList.remove('hidden');
+    mainApp.classList.add('hidden');
+    hideAll();
+}
+
+// メインアプリを表示
+function showMainApp() {
+    apiKeySection.classList.add('hidden');
+    mainApp.classList.remove('hidden');
+}
+
+// 保存されたAPIキーを取得
+function getApiKey() {
+    // まず組み込みAPIキーをチェック（GitHub Actionsでデプロイされた場合）
+    if (BUILT_IN_API_KEY && BUILT_IN_API_KEY !== 'API_KEY_PLACEHOLDER') {
+        return BUILT_IN_API_KEY;
+    }
+    // 次にローカルストレージをチェック
+    return localStorage.getItem(API_KEY_STORAGE);
+}
+
+// 成功メッセージを表示
+function showSuccess(message) {
+    const successDiv = document.createElement('div');
+    successDiv.className = 'success';
+    successDiv.textContent = message;
+    successDiv.style.cssText = `
+        background: #00b894;
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        margin-bottom: 1rem;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+    `;
+    
+    document.body.appendChild(successDiv);
+    
+    setTimeout(() => {
+        document.body.removeChild(successDiv);
+    }, 3000);
 }
 
 // すべての表示要素を非表示にする
