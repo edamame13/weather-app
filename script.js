@@ -191,13 +191,14 @@ function initializeApp() {
     const apiKey = getApiKey();
     
     // デバッグ情報（本番では削除推奨）
+    console.log('Config API Key status:', window.WEATHER_APP_CONFIG?.API_KEY ? 'Available' : 'Not available');
     console.log('Built-in API Key status:', BUILT_IN_API_KEY !== 'API_KEY_PLACEHOLDER' ? 'Available' : 'Not available');
     console.log('Local storage API Key:', localStorage.getItem(API_KEY_STORAGE) ? 'Available' : 'Not available');
     
     if (apiKey) {
         showMainApp();
         // 組み込みAPIキーがある場合は設定情報を非表示
-        if (BUILT_IN_API_KEY && BUILT_IN_API_KEY !== 'API_KEY_PLACEHOLDER') {
+        if ((window.WEATHER_APP_CONFIG?.API_KEY) || (BUILT_IN_API_KEY && BUILT_IN_API_KEY !== 'API_KEY_PLACEHOLDER')) {
             const apiKeyInfo = document.querySelector('.api-key-info');
             if (apiKeyInfo) {
                 apiKeyInfo.style.display = 'none';
@@ -244,11 +245,15 @@ function showMainApp() {
 
 // 保存されたAPIキーを取得
 function getApiKey() {
-    // まず組み込みAPIキーをチェック（GitHub Actionsでデプロイされた場合）
+    // まず設定ファイルからAPIキーをチェック（GitHub Actionsでデプロイされた場合）
+    if (window.WEATHER_APP_CONFIG && window.WEATHER_APP_CONFIG.API_KEY) {
+        return window.WEATHER_APP_CONFIG.API_KEY;
+    }
+    // 次に組み込みAPIキーをチェック
     if (BUILT_IN_API_KEY && BUILT_IN_API_KEY !== 'API_KEY_PLACEHOLDER') {
         return BUILT_IN_API_KEY;
     }
-    // 次にローカルストレージをチェック
+    // 最後にローカルストレージをチェック
     return localStorage.getItem(API_KEY_STORAGE);
 }
 

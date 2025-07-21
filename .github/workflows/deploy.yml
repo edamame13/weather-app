@@ -26,9 +26,15 @@ jobs:
     - name: Setup Pages
       uses: actions/configure-pages@v4
       
-    - name: Replace API key placeholder
+    - name: Create config file with API key
       run: |
-        sed -i "s/API_KEY_PLACEHOLDER/${{ secrets.OPENWEATHER_API_KEY }}/g" script.js
+        echo "Creating config.js with API key..."
+        cat > config.js << EOF
+        window.WEATHER_APP_CONFIG = {
+          API_KEY: '${{ secrets.OPENWEATHER_API_KEY }}'
+        };
+        EOF
+        echo "Config file created successfully"
       
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
